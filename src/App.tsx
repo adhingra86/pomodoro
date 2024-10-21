@@ -25,25 +25,30 @@ function App() {
   };
 
   return (
-    <h1>
-      {formatTimeLeft(secondsLeft)}
-      <br />
-      <button onClick={() => setIsActive(!isActive)}>
-        {isActive
-          ? "Pause"
-          : secondsLeft === pomoTimer * 60
-          ? "Start"
-          : "Resume "}
-      </button>
-      <button
-        onClick={() => {
-          setSecondsLeft(pomoTimer * 60);
-          setIsActive(false);
-        }}
-      >
-        Reset
-      </button>
-    </h1>
+    <div className="flex flex-col items-center py-5">
+      <h1 className="text-9xl mb-2">{formatTimeLeft(secondsLeft)}</h1>
+      <div>
+        <button
+          onClick={() => setIsActive(!isActive)}
+          className="bg-blue-700 text-white py-2 px-7 mr-1"
+        >
+          {isActive
+            ? "Pause"
+            : secondsLeft === pomoTimer * 60
+            ? "Start"
+            : "Resume "}
+        </button>
+        <button
+          className="bg-blue-700 text-white py-2 px-7"
+          onClick={() => {
+            setSecondsLeft(pomoTimer * 60);
+            setIsActive(false);
+          }}
+        >
+          Reset
+        </button>
+      </div>
+    </div>
   );
 }
 
