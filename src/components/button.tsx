@@ -15,7 +15,7 @@ export const Button = ({
     <button
       onClick={onClick}
       className={`${
-        backgroundColor || "bg-gray-600"
+        backgroundColor || "bg-gray-500"
       }  text-white py-2 px-7 rounded-lg`}
     >
       {buttonText}
