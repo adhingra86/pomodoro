@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { Button } from "./components/button";
+
 function App() {
   const pomoTimer = 25;
   const [secondsLeft, setSecondsLeft] = useState(pomoTimer * 60);
@@ -25,28 +27,28 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col items-center py-5">
-      <h1 className="text-9xl mb-2">{formatTimeLeft(secondsLeft)}</h1>
-      <div>
-        <button
+    <div className="flex flex-col items-center">
+      <h1 className="text-9xl mb-2 w-[350px] text-center">
+        {formatTimeLeft(secondsLeft)}
+      </h1>
+      <div className="flex gap-3">
+        <Button
+          buttonText={
+            isActive
+              ? "Pause"
+              : secondsLeft === pomoTimer * 60
+              ? "Start"
+              : "Resume "
+          }
           onClick={() => setIsActive(!isActive)}
-          className="bg-blue-700 text-white py-2 px-7 mr-1"
-        >
-          {isActive
-            ? "Pause"
-            : secondsLeft === pomoTimer * 60
-            ? "Start"
-            : "Resume "}
-        </button>
-        <button
-          className="bg-blue-700 text-white py-2 px-7"
+        />
+        <Button
+          buttonText="Reset"
           onClick={() => {
             setSecondsLeft(pomoTimer * 60);
             setIsActive(false);
           }}
-        >
-          Reset
-        </button>
+        />
       </div>
     </div>
   );
