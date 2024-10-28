@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from "./components/button";
 import { Tabs } from "./components/tabs/tabs";
+import { Timer } from "./components/timer";
 
 const timersMap = new Map([
   ["Pomodoro", 25],
@@ -23,6 +24,16 @@ function App() {
 
       if (secondsLeft === 0) {
         clearInterval(interval);
+        setCurrentTimer((prevTimer) => {
+          const index = availableTimers.findIndex(
+            (timer) => timer === prevTimer
+          );
+          if (index === availableTimers.length - 1) {
+            return availableTimers[0];
+          }
+          return availableTimers[index + 1];
+        });
+        setIsActive(false);
       }
       return () => clearInterval(interval);
     }
@@ -32,24 +43,19 @@ function App() {
     setSecondsLeft(currentTimer * 60);
   }, [currentTimer]);
 
-  const formatTimeLeft = (seconds: number) => {
-    return `${Math.floor(seconds / 60)}:${seconds % 60 < 10 ? "0" : ""}${
-      seconds % 60
-    }`;
-  };
-
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center pt-10">
       <Tabs
         tabs={["Pomodoro", "Short Break", "Long Break"]}
-        selectedTabIndex={(index) => {
+        selectTab={(index) => {
           setCurrentTimer(availableTimers[index]);
           setIsActive(false);
         }}
+        selectedTabIndex={availableTimers.findIndex(
+          (timer) => timer === currentTimer
+        )}
       />
-      <h1 className="text-9xl mb-2 w-[350px] text-center">
-        {formatTimeLeft(secondsLeft)}
-      </h1>
+      <Timer secondsLeft={secondsLeft} />
       <div className="flex gap-3">
         <Button
           buttonText={
@@ -60,6 +66,7 @@ function App() {
               : "Resume"
           }
           onClick={() => setIsActive(!isActive)}
+          backgroundColor="bg-blue-600"
         />
         <Button
           buttonText="Reset"
