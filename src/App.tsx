@@ -5,10 +5,12 @@ import { Tabs } from "./components/tabs/tabs";
 import { Timer } from "./components/timer";
 
 const timersMap = new Map([
-  ["Pomodoro", 0.1],
-  ["Short Break", 0.05],
+  ["Pomodoro", 25],
+  ["Short Break", 5],
   ["Long Break", 15],
 ]);
+
+const POMODORO_CYCLE_LENGTH = 4;
 
 function App() {
   const availableTimers = Array.from(timersMap.values());
@@ -16,6 +18,9 @@ function App() {
   const [secondsLeft, setSecondsLeft] = useState(currentTimer * 60);
   const [isActive, setIsActive] = useState(false);
   const [pomoSessions, setPomoSessions] = useState(0);
+
+  const timerIndex = availableTimers.indexOf(currentTimer);
+  const currentTimerName = Array.from(timersMap.keys())[timerIndex];
 
   useEffect(() => {
     const currentPomoSessions = localStorage.getItem("pomoSessions");
@@ -31,24 +36,9 @@ function App() {
       }, 1000);
 
       if (secondsLeft === 0) {
-        setPomoSessions((pomoSessions) => pomoSessions + 1);
-        localStorage.setItem("pomoSessions", String(pomoSessions + 1));
-        setCurrentTimer((prevTimer) => {
-          if (
-            availableTimers.indexOf(prevTimer) + 1 ===
-              availableTimers.length - 1 &&
-            pomoSessions < 4
-          ) {
-            return availableTimers[0];
-          }
-          const index = availableTimers.findIndex(
-            (timer) => timer === prevTimer
-          );
-
-          return availableTimers[index + 1];
-        });
         clearInterval(interval);
         setIsActive(false);
+        handleTimerEnd();
       }
       return () => clearInterval(interval);
     }
@@ -57,6 +47,22 @@ function App() {
   useEffect(() => {
     setSecondsLeft(currentTimer * 60);
   }, [currentTimer]);
+
+  const handleTimerEnd = () => {
+    if (currentTimerName === "Pomodoro") {
+      setPomoSessions((session) => session + 1);
+      if (pomoSessions + 1 === POMODORO_CYCLE_LENGTH) {
+        setCurrentTimer(availableTimers[availableTimers.length - 1]);
+      } else {
+        setCurrentTimer(availableTimers[timerIndex + 1]);
+      }
+    } else if (currentTimerName === "Short Break") {
+      setCurrentTimer(availableTimers[timerIndex - 1]);
+    } else if (currentTimerName === "Long Break") {
+      setCurrentTimer(availableTimers[0]);
+      setPomoSessions(0);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center pt-10">
